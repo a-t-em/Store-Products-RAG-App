@@ -1,4 +1,10 @@
 flask
 elasticsearch
 transformers
+pandas
+pytest
+requests
+json
+flake8
+black
 
