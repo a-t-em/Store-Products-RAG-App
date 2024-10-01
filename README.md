@@ -27,8 +27,3 @@ Clone the repo and use the Makefile to set up the environment and launch and tes
 3. Run  `make start-elasticsearch` to spin up the docker container hosting elasticsearch.
 4. Run `make run` to launch the RAG app.
 5. Run `make test` to test the connection with the endpoint of the RAG app by sending a POST request. 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 946b60bd7549ac6dd1c4d2686312d85b72ee1ee7
