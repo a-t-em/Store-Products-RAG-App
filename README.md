@@ -17,6 +17,9 @@ This is an AI-generated toy dataset containing product info: *id*, *name*, and *
 <li>pandas</li>
 <li>pytest</li>
 <li>requests</li>
+<li>json</li>
+<li>flake8</li>
+<li>black</li>
 </ul>
 
 **Usage**
