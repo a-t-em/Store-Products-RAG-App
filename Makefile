@@ -19,8 +19,7 @@ start-elasticsearch:
 		docker.elastic.co/elasticsearch/elasticsearch:8.4.3
 
 start-loki:
-	cd loki
-	docker-compose -f docker-compose.yaml up
+	cd loki && docker-compose -f docker-compose.yaml up
 
 lint:
 	flake8

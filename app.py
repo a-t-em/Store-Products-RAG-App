@@ -23,7 +23,7 @@ for _, row in df.iterrows():
     es.index(index="products", id=product["id"], body=product)
 
 # Initialize the LLM
-llm = pipeline("text-generation", model="gpt2")
+llm = pipeline("text-generation", model="tiiuae/falcon-7b")
 
 def search(query):
     search_body = {
@@ -49,12 +49,12 @@ def after_request(response):
 def query():
     user_query = request.json.get("query")
     results = search(user_query)
+    print("result of elastic search --", results)
     if results:
-        top_result = results["_source"]
-        context = (
-            f"Product: {top_result['name']}\nDescription: {top_result['description']}"
+        context = "\n".join(
+            [f"Product: {result['_source']['name']}\nDescription: {result['_source']['description']}" for result in results]
         )
-        prompt = f"Context: {context}\n\nUser Query: {user_query}\n\nResponse: Please provide an answer based on the context above. If there is no relevant information in the context, respond with 'No relevant information found.'"
+        prompt = f"Context: {context}\n\nUser Query: {user_query}\n\nResponse:"
         response = llm(prompt, max_length=50, num_return_sequences=1)["generated_text"]
         return jsonify({"response": response})
     else:

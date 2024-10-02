@@ -6,6 +6,5 @@ pytest
 requests
 flake8
 black
-logging
 python-logging-loki
 
