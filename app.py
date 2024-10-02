@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from elasticsearch import Elasticsearch
 from transformers import pipeline
 import pandas as pd
+from monitoring import log_request, log_response
 
 app = Flask(__name__)
 
@@ -24,7 +25,6 @@ for _, row in df.iterrows():
 # Initialize the LLM
 llm = pipeline("text-generation", model="gpt2")
 
-
 def search(query):
     search_body = {
         "query": {
@@ -37,22 +37,28 @@ def search(query):
     results = es.search(index="products", body=search_body)
     return results["hits"]["hits"]
 
+@app.before_request
+def before_request():
+    log_request()
+
+@app.after_request
+def after_request(response):
+    return log_response(response)
 
 @app.route("/query", methods=["POST"])
 def query():
     user_query = request.json.get("query")
     results = search(user_query)
     if results:
-        top_result = results[0]["_source"]
+        top_result = results["_source"]
         context = (
             f"Product: {top_result['name']}\nDescription: {top_result['description']}"
         )
-        prompt = f"Context: {context}\n\nUser Query: {user_query}\n\nResponse:"
-        response = llm(prompt, max_length=50)[0]["generated_text"]
+        prompt = f"Context: {context}\n\nUser Query: {user_query}\n\nResponse: Please provide an answer based on the context above. If there is no relevant information in the context, respond with 'No relevant information found.'"
+        response = llm(prompt, max_length=50, num_return_sequences=1)["generated_text"]
         return jsonify({"response": response})
     else:
         return jsonify({"response": "No relevant products found."})
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

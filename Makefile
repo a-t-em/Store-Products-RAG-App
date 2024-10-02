@@ -2,6 +2,7 @@ install:
 	pip install -r requirements.txt
 
 run:
+	python monitoring.py
 	python app.py
 
 test:
@@ -16,6 +17,10 @@ start-elasticsearch:
 		-e "discovery.type=single-node" \
 		-e "xpack.security.enabled=false" \
 		docker.elastic.co/elasticsearch/elasticsearch:8.4.3
+
+start-loki:
+	cd loki
+	docker-compose -f docker-compose.yaml up
 
 lint:
 	flake8

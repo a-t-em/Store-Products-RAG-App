@@ -9,7 +9,7 @@ def test_flask_app():
     response = requests.post(url, headers=headers, data=json.dumps(data))
 
     print("Status Code:", response.status_code)
-    print("Response JSON:", response.json()["response"])
+    print("Response JSON:", response.json())
 
     assert response.status_code == 200
 
