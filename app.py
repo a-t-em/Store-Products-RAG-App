@@ -13,7 +13,12 @@ df = pd.read_csv("store_products.csv")
 
 # Index the dataset
 for _, row in df.iterrows():
-    product = {"id": row["id"], "name": row["name"], "description": row["description"]}
+    product = {
+        "id": row["id"],
+        "name": row["name"],
+        "category": row["category"],
+        "description": row["description"],
+    }
     es.index(index="products", id=product["id"], body=product)
 
 # Initialize the LLM
@@ -22,7 +27,12 @@ llm = pipeline("text-generation", model="gpt2")
 
 def search(query):
     search_body = {
-        "query": {"multi_match": {"query": query, "fields": ["name", "description"]}}
+        "query": {
+            "multi_match": {
+                "query": query,
+                "fields": ["name", "category", "description"],
+            }
+        }
     }
     results = es.search(index="products", body=search_body)
     return results["hits"]["hits"]
@@ -45,4 +55,4 @@ def query():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)

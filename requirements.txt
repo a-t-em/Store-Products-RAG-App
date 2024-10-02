@@ -4,7 +4,6 @@ transformers
 pandas
 pytest
 requests
-json
 flake8
 black
 

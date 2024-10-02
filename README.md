@@ -7,7 +7,7 @@ This project is a proof-of-concept for a RAG application for querying informatio
 This project is a Flask application that integrates Elasticsearch for product search and a Hugging Face LLM for generating responses based on product descriptions.
 
 **Dataset - `store_products.csv`**<br>
-This is an AI-generated toy dataset containing product info: *id*, *name*, and *description*. It can be replaced by real-world data with the same fields.
+This is an AI-generated toy dataset containing product info: *id*, *name*, *category*, and *description*. It can be replaced by real-world data with the same fields.
 
 **Dependencies**
 <ul>
@@ -17,7 +17,6 @@ This is an AI-generated toy dataset containing product info: *id*, *name*, and *
 <li>pandas</li>
 <li>pytest</li>
 <li>requests</li>
-<li>json</li>
 <li>flake8</li>
 <li>black</li>
 </ul>
