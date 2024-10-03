@@ -49,16 +49,15 @@ def after_request(response):
 def query():
     user_query = request.json.get("query")
     results = search(user_query)
-    print("result of elastic search --", results)
     if results:
         context = "\n".join(
             [f"Product: {result['_source']['name']}\nDescription: {result['_source']['description']}" for result in results]
         )
         prompt = f"Context: {context}\n\nUser Query: {user_query}\n\nResponse:"
-        response = llm(prompt, max_length=50, num_return_sequences=1)["generated_text"]
-        return jsonify({"response": response})
+        response = llm(prompt, max_length=50, truncation=True, num_return_sequences=1, return_full_text=False)
+        return jsonify({"response": response[0]["generated_text"]})
     else:
         return jsonify({"response": "No relevant products found."})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)
