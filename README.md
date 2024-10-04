@@ -29,6 +29,6 @@ Clone the repo and use the Makefile to set up the environment and launch and tes
 2. Run `make install` in the terminal to install all the dependencies in `requirements.txt`.
 3. Run  `make start-elasticsearch` to spin up the docker container hosting elasticsearch.
 4. Run `make start-loki` to set up Grafana connection.
-5. Run `make run` to run the logging script in `monitoring.py` and launch the RAG app (`app.py `).
+5. Run `make run` to run the logging script in `monitoring.py` and launch the RAG app (`app.py`).
 6. Run `make test` to test the connection with the endpoint of the RAG app by sending a POST request. 
-7. Log in to Grafana on localhost 3100 and import logs for monitoring the queries to the app. 
+7. Log in to Grafana on localhost 3000 and import logs for monitoring the queries to the app. 

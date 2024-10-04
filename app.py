@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from elasticsearch import Elasticsearch
 from transformers import pipeline
 import pandas as pd
@@ -23,7 +23,8 @@ for _, row in df.iterrows():
     es.index(index="products", id=product["id"], body=product)
 
 # Initialize the LLM
-llm = pipeline("text-generation", model="tiiuae/falcon-7b")
+# llm = pipeline("text-generation", model="tiiuae/falcon-7b")
+llm = pipeline("text-generation", model="gpt2")
 
 def search(query):
     search_body = {
@@ -45,10 +46,16 @@ def before_request():
 def after_request(response):
     return log_response(response)
 
+@app.route('/')
+def index():
+    return render_template('./frontend/index.html')
+
 @app.route("/query", methods=["POST"])
 def query():
-    user_query = request.json.get("query")
+    user_query = request.get_json("query")
+    # user_query = request.json.get("query")
     results = search(user_query)
+    
     if results:
         context = "\n".join(
             [f"Product: {result['_source']['name']}\nDescription: {result['_source']['description']}" for result in results]
