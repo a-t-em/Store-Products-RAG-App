@@ -32,7 +32,7 @@ Clone the repo and use the Makefile to set up the environment and launch and tes
 4. Run `make start-loki` to set up Grafana connection.
 5. Run `make run` to run the logging script in `monitoring.py` and launch the RAG app (`app.py`).
 6. Optionally, run `make test` to test the connection with the flask backend using the default test case.
-7. Go to http://localhost:5000 to interact with the RAG app through the web UI.Alternatively, you can query the endpoint directly, e.g. by running curl commands in the bash terminal:<br>
+7. Go to http://localhost:5000 to interact with the RAG app through the web UI. Alternatively, you can query the endpoint directly, e.g. by running curl commands in the bash terminal:<br>
 `curl -X POST http://localhost:5000/query
      -H "Content-Type: application/json"
      -d '{"query": "any laptop"}'`
