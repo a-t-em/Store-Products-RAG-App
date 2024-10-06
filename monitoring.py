@@ -18,11 +18,18 @@ logger.addHandler(loki_handler)
 
 
 def log_request():
-    logger.info(f"Request: {request.method} {request.url} - Body: {request.json}")
+    if request.content_type == "application/json":
+        logger.info(
+            f"Request: {request.method} {request.url} - Body: {request.get_json()}"
+        )
+    else:
+        logger.info(f"Request: {request.method} {request.url} - Body: Non-JSON request")
 
 
 def log_response(response):
-    logger.info(
-        f"Response: {response.status_code} - Body: {response.get_data(as_text=True)}"
-    )
+    try:
+        response_data = response.get_data(as_text=True)
+    except RuntimeError:
+        response_data = "Response data not available (passthrough mode)"
+    logger.info(f"Response: {response.status_code} - Body: {response_data}")
     return response

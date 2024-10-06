@@ -28,6 +28,7 @@ for _, row in df.iterrows():
 # llm = pipeline("text-generation", model="tiiuae/falcon-7b")
 llm = pipeline("text-generation", model="gpt2")
 
+
 def search(query):
     search_body = {
         "query": {
@@ -40,39 +41,46 @@ def search(query):
     results = es.search(index="products", body=search_body)
     return results["hits"]["hits"]
 
+
 @app.before_request
 def before_request():
     log_request()
+
 
 @app.after_request
 def after_request(response):
     return log_response(response)
 
-@app.route('/')
-def index():
-    return render_template('./index.html')
 
-@app.route('/test', methods=["GET"])
-def test():
-    return "Server is running", 200
+@app.route("/", methods=["GET"])
+def index():
+    return render_template("index.html")
+
 
 @app.route("/query", methods=["POST"])
 def query():
     try:
         user_query = request.json.get("query")
         if not user_query:
-            app.logger.error("Invalid input: No query provided")
             return jsonify({"error": "Invalid input"}), 400
         results = search(user_query)
         if results:
             context = "\n".join(
-                [f"Product: {result['_source']['name']}\nDescription: {result['_source']['description']}" for result in results]
+                [
+                    f"Product: {result['_source']['name']}\nDescription: {result['_source']['description']}"
+                    for result in results
+                ]
             )
             prompt = f"Context: {context}\n\nUser Query: {user_query}\n\nResponse:"
-            response = llm(prompt, max_length=200, truncation=True, num_return_sequences=1, return_full_text=False)
+            response = llm(
+                prompt,
+                max_length=200,
+                truncation=True,
+                num_return_sequences=1,
+                return_full_text=False,
+            )
             return jsonify({"response": response[0]["generated_text"]})
     except Exception as e:
-        app.logger.error(f"Error processing request: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
 
