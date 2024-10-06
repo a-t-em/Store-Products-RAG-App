@@ -3,7 +3,9 @@ from flask import request
 from logging_loki import LokiHandler
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Loki configuration
@@ -14,9 +16,13 @@ loki_handler = LokiHandler(
 )
 logger.addHandler(loki_handler)
 
+
 def log_request():
     logger.info(f"Request: {request.method} {request.url} - Body: {request.json}")
 
+
 def log_response(response):
-    logger.info(f"Response: {response.status_code} - Body: {response.get_data(as_text=True)}")
+    logger.info(
+        f"Response: {response.status_code} - Body: {response.get_data(as_text=True)}"
+    )
     return response

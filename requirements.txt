@@ -7,4 +7,5 @@ requests
 flake8
 black
 python-logging-loki
+flask_cors
 
