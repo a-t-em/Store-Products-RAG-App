@@ -12,7 +12,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 es = Elasticsearch(hosts=["http://localhost:9200"])
 
 # Read the CSV file
-df = pd.read_csv("store_products.csv")
+df = pd.read_csv("./data/store_products.csv")
 
 # Index the dataset
 for _, row in df.iterrows():
@@ -52,20 +52,29 @@ def after_request(response):
 def index():
     return render_template('./index.html')
 
+@app.route('/test', methods=["GET"])
+def test():
+    return "Server is running", 200
+
 @app.route("/query", methods=["POST"])
 def query():
-    user_query = request.json.get("query")
-    results = search(user_query)
-    if results:
-        context = "\n".join(
-            [f"Product: {result['_source']['name']}\nDescription: {result['_source']['description']}" for result in results]
-        )
-        prompt = f"Context: {context}\n\nUser Query: {user_query}\n\nResponse:"
-        response = llm(prompt, max_length=200, truncation=True, num_return_sequences=1, return_full_text=False)
-        return jsonify({"response": response[0]["generated_text"]})
-    else:
-        return jsonify({"response": "No relevant products found."})
+    try:
+        user_query = request.json.get("query")
+        if not user_query:
+            app.logger.error("Invalid input: No query provided")
+            return jsonify({"error": "Invalid input"}), 400
+        results = search(user_query)
+        if results:
+            context = "\n".join(
+                [f"Product: {result['_source']['name']}\nDescription: {result['_source']['description']}" for result in results]
+            )
+            prompt = f"Context: {context}\n\nUser Query: {user_query}\n\nResponse:"
+            response = llm(prompt, max_length=200, truncation=True, num_return_sequences=1, return_full_text=False)
+            return jsonify({"response": response[0]["generated_text"]})
+    except Exception as e:
+        app.logger.error(f"Error processing request: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
